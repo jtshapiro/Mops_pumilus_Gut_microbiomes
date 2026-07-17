@@ -100,7 +100,7 @@ camp.metadat.geo.roost <- rich.metadat.geo.roost %>%
 ##################################################################################################
 #### --- Host characteristics and potential pathogen prevalence --- ####
 ##################################################################################################
-# Reformat the data to run t-tests (ASV richness) and then chi squared test for sex, age, and reproductive condition
+# Reformat the data to run chi squared test for sex, age, and reproductive condition
 # Bartonella
 bart.chi.dat <- rich.metadat %>%
   ungroup() %>%
@@ -109,18 +109,6 @@ bart.chi.dat <- rich.metadat %>%
   mutate(bart.pres = across(starts_with("seq")) %>% rowSums) %>%
   mutate(bart.pres = ifelse(bart.pres > 0, 1, 0)) %>%
   mutate(bart.factor = ifelse(bart.pres > 0, "Present", "Absent"))
-
-# T-test: ASV richness in bats with / without Bartonella
-t.test(bart.chi.dat$asv.richness ~ bart.chi.dat$bart.factor)
-
-# Violin plot
-bart.rich.plot <-ggplot(data = bart.chi.dat, 
-                        aes(x = bart.factor, y = asv.richness)) + 
-  labs(x='Bartonella', y= 'ASV Richness', size=18) + 
-  geom_violin() +
-  geom_dotplot(binaxis='y', stackdir='center', dotsize=0.5) +
-  stat_summary(fun=mean, geom="point",shape=23, size=4, color="red", fill="red") +
-  theme_classic()
 
 # Chi-squared test : 
 # Sex
@@ -161,18 +149,6 @@ rick.chi.dat <- rich.metadat %>%
   mutate(rick.pres = ifelse(rick.pres > 0, 1, 0)) %>%
   mutate(rick.factor = ifelse(rick.pres > 0, "Present", "Absent"))
 
-# T-test: ASV richness in bats with / without Rickettsia
-t.test(rick.chi.dat$asv.richness ~ rick.chi.dat$rick.factor)
-
-# Violin plot
-rick.rich.plot <-ggplot(data = rick.chi.dat, 
-                        aes(x = rick.factor, y = asv.richness)) + 
-  labs(x='Rickettsia', y= 'ASV Richness', size=18) + 
-  geom_violin() +
-  geom_dotplot(binaxis='y', stackdir='center', dotsize=0.5) +
-  stat_summary(fun=mean, geom="point",shape=23, size=4, color="red", fill="red") +
-  theme_classic()
-
 # Chi-squared test:
 # Sex
 rick.chi.sex <- rick.chi.dat %>%
@@ -211,18 +187,6 @@ salm.chi.dat <- rich.metadat %>%
   mutate(salm.pres = ifelse(salm.pres > 0, 1, 0)) %>%
   mutate(salm.factor = ifelse(salm.pres > 0, "Present", "Absent"))
 
-# T-test: ASV richness in bats with / without Salmonella
-t.test(salm.chi.dat$asv.richness ~ salm.chi.dat$salm.factor)
-
-# Violin plot
-salm.rich.plot <-ggplot(data = salm.chi.dat, 
-                        aes(x = salm.factor, y = asv.richness)) + 
-  labs(x='Salmonella', y= 'ASV Richness', size=18) + 
-  geom_violin() +
-  geom_dotplot(binaxis='y', stackdir='center', dotsize=0.5) +
-  stat_summary(fun=mean, geom="point",shape=23, size=4, color="red", fill="red") +
-  theme_classic()
-
 # Chi-squared test:
 # Sex
 salm.chi.sex <- salm.chi.dat %>%
@@ -259,18 +223,6 @@ camp.chi.dat <- rich.metadat3 %>%
   mutate(camp.pres = across(starts_with("seq")) %>% rowSums) %>%
   mutate(camp.pres = ifelse(camp.pres > 0, 1, 0))%>%
   mutate(camp.factor = ifelse(camp.pres > 0, "Present", "Absent"))
-
-# T-test: ASV richness in bats with / without Campylobacter
-t.test(camp.chi.dat$asv.richness ~ camp.chi.dat$camp.factor)
-
-# Violin plot: 
-camp.rich.plot <-ggplot(data = camp.chi.dat, 
-                        aes(x = camp.factor, y = asv.richness)) + 
-  labs(x='Campylobacter', y= 'ASV Richness', size=18) + 
-  geom_violin() +
-  geom_dotplot(binaxis='y', stackdir='center', dotsize=0.5) +
-  stat_summary(fun=mean, geom="point",shape=23, size=4, color="red", fill="red") +
-  theme_classic()
 
 # Chi-squared test:
 # Sex
@@ -315,18 +267,6 @@ mycop.chi.dat <- rich.metadat %>%
   mutate(mycop.pres = ifelse(mycop.pres > 0, 1, 0))%>%
   mutate(mycop.factor = ifelse(mycop.pres > 0, "Present", "Absent"))
 
-# T-test: ASV richness in bats with / without Mycoplasma
-t.test(mycop.chi.dat$asv.richness ~ mycop.chi.dat$mycop.factor)
-
-# Violin plot:
-mycop.rich.plot <-ggplot(data = mycop.chi.dat, 
-                         aes(x = mycop.factor, y = asv.richness)) + 
-  labs(x='Mycoplasma', y= 'ASV Richness', size=18) + 
-  geom_violin() +
-  geom_dotplot(binaxis='y', stackdir='center', dotsize=0.5) +
-  stat_summary(fun=mean, geom="point",shape=23, size=4, color="red", fill="red") +
-  theme_classic()
-
 # Chi-squared test:
 # Sex
 mycop.chi.sex <- mycop.chi.dat %>%
@@ -358,19 +298,8 @@ mycop.chi.repro <- mycop.chi.dat %>%
 #select(-R)
 
 chisq.test(mycop.chi.repro)
-
-
-# Combine all the violin plots comparing ASV richness in bats with / without each potential pathogen:
-richness.path.plot <- ggarrange(bart.rich.plot, camp.rich.plot, mycop.rich.plot, rick.rich.plot, salm.rich.plot,
-                                ncol = 3, nrow = 2, labels = 
-                                  c("A.","B.", "C.", "D.", "E."),
-                                align='hv',
-                                vjust=0, hjust=1) +
-  theme(plot.margin = margin(1,1,1,1, "cm"))
-
-# Optional: save
-ggsave(richness.path.plot, filename="richness.path.plot.png", width = 10, height =8)
 ##################################################################################################
+
 
 ##################################################################################################
 #### --- Co-occurrence of potential pathogens --- ####

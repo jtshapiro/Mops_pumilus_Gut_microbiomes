@@ -5,7 +5,7 @@
 # prevalence of potential bacterial pathogens but limited responses to land cover            #####
 #                                                                                            #####
 #                                                                                            #####
-# Script 04 : Spatial models to determine the association between ASV richness and           #####
+# Script 06 : Spatial models to determine the association between ASV richness and           #####
 #            land-cover metrics                                                              #####
 #                                                                                            #####
 #                                                                                            #####
@@ -40,10 +40,8 @@ rich.metadat.geo.roost <- rich.metadat %>%
 ##################################################################################################
 #### --- Modeling and model selection --- ####
 ##################################################################################################
-
 # Create the list of candidate models:
 bact.glmms <- list(
-  propsav2000 = glmer(asv.richness ~ scale(PropSav2000)+ (1|Site), data=rich.metadat.geo.roost, family=poisson),
   propsug2000 = glmer(asv.richness ~ scale(PropSug2000)+ (1|Site), data=rich.metadat.geo.roost, family=poisson),
   proprur2000 = glmer(asv.richness ~ scale(PropRur2000)+ (1|Site), data=rich.metadat.geo.roost, family=poisson),
   propwat2000 = glmer(asv.richness ~ scale(PropWat2000)+ (1|Site), data=rich.metadat.geo.roost, family=poisson),
@@ -52,7 +50,6 @@ bact.glmms <- list(
   propsav120 = glmer(asv.richness ~ scale(PropSav120)+ (1|Site), data=rich.metadat.geo.roost, family=poisson),
   propsug120 = glmer(asv.richness ~ scale(PropSug120)+ (1|Site), data=rich.metadat.geo.roost, family=poisson),
   proprur120 = glmer(asv.richness ~ scale(PropRur120)+ (1|Site), data=rich.metadat.geo.roost, family=poisson),
-  edge120 = glmer(asv.richness ~ scale(SavEdge120)+ (1|Site), data=rich.metadat.geo.roost, family=poisson),
   null = glmer(asv.richness ~ 1 + (1|Site), data=rich.metadat.geo.roost, family=poisson)
   
 )
@@ -63,5 +60,5 @@ bact.modsel <- model.sel(bact.glmms)
 ##################################################################################################
 
 ##################################################################################################
-#### --- End of script, proceed to Script 05 --- ####
+#### --- End of script, proceed to Script 07 --- ####
 ##################################################################################################

@@ -5,7 +5,7 @@
 # prevalence of potential bacterial pathogens but limited responses to land cover            #####
 #                                                                                            #####
 #                                                                                            #####
-# Script 06 : Spatial models to determine the association between the                        #####
+# Script 08 : Spatial models to determine the association between the                        #####
 #             presence / absence of each potential pathogen at the roost level               #####
 #             and land-cover metrics                                                         #####
 #                                                                                            #####
@@ -126,8 +126,6 @@ bart.glms.bin <- list(
   propsav120 = glm(bart.binom ~ scale(PropSav120), data=bart.prev.geo.roost, family=binomial),
   propsug120 = glm(bart.binom ~ scale(PropSug120), data=bart.prev.geo.roost, family=binomial),
   proprur120 = glm(bart.binom ~ scale(PropRur120), data=bart.prev.geo.roost, family=binomial),
-  edge120 = glm(bart.binom ~ scale(SavEdge120), data=bart.prev.geo.roost, family=binomial),
-  propsav2000 = glm(bart.binom ~ scale(PropSav2000), data=bart.prev.geo.roost, family=binomial),
   propsug2000 = glm(bart.binom ~ scale(PropSug2000), data=bart.prev.geo.roost, family=binomial),
   proprur2000 = glm(bart.binom ~ scale(PropRur2000), data=bart.prev.geo.roost, family=binomial),
   propwat2000 = glm(bart.binom ~ scale(PropWat2000), data=bart.prev.geo.roost, family=binomial),
@@ -163,8 +161,6 @@ rick.glms.bin <- list(
   propsav120 = glm(rick.binom ~ scale(PropSav120), data=rick.prev.geo.roost, family=binomial),
   propsug120 = glm(rick.binom ~ scale(PropSug120), data=rick.prev.geo.roost, family=binomial),
   proprur120 = glm(rick.binom ~ scale(PropRur120), data=rick.prev.geo.roost, family=binomial),
-  edge120 = glm(rick.binom ~ scale(SavEdge120), data=rick.prev.geo.roost, family=binomial),
-  propsav2000 = glm(rick.binom ~ scale(PropSav2000), data=rick.prev.geo.roost, family=binomial),
   propsug2000 = glm(rick.binom ~ scale(PropSug2000), data=rick.prev.geo.roost, family=binomial),
   proprur2000 = glm(rick.binom ~ scale(PropRur2000), data=rick.prev.geo.roost, family=binomial),
   propwat2000 = glm(rick.binom ~ scale(PropWat2000), data=rick.prev.geo.roost, family=binomial),
@@ -185,8 +181,6 @@ salm.glms.bin <- list(
   propsav120 = glm(salm.binom ~ scale(PropSav120), data=salm.prev.geo.roost, family=binomial),
   propsug120 = glm(salm.binom ~ scale(PropSug120), data=salm.prev.geo.roost, family=binomial),
   proprur120 = glm(salm.binom ~ scale(PropRur120), data=salm.prev.geo.roost, family=binomial),
-  edge120 = glm(salm.binom ~ scale(SavEdge120), data=salm.prev.geo.roost, family=binomial),
-  propsav2000 = glm(salm.binom ~ scale(PropSav2000), data=salm.prev.geo.roost, family=binomial),
   propsug2000 = glm(salm.binom ~ scale(PropSug2000), data=salm.prev.geo.roost, family=binomial),
   proprur2000 = glm(salm.binom ~ scale(PropRur2000), data=salm.prev.geo.roost, family=binomial),
   propwat2000 = glm(salm.binom ~ scale(PropWat2000), data=salm.prev.geo.roost, family=binomial),
@@ -208,8 +202,6 @@ camp.glms.bin <- list(
   propsav120 = glm(camp.binom ~ scale(PropSav120), data=camp.prev.geo.roost, family=binomial),
   propsug120 = glm(camp.binom ~ scale(PropSug120), data=camp.prev.geo.roost, family=binomial),
   proprur120 = glm(camp.binom ~ scale(PropRur120), data=camp.prev.geo.roost, family=binomial),
-  edge120 = glm(camp.binom ~ scale(SavEdge120), data=camp.prev.geo.roost, family=binomial),
-  propsav2000 = glm(camp.binom ~ scale(PropSav2000), data=camp.prev.geo.roost, family=binomial),
   propsug2000 = glm(camp.binom ~ scale(PropSug2000), data=camp.prev.geo.roost, family=binomial),
   proprur2000 = glm(camp.binom ~ scale(PropRur2000), data=camp.prev.geo.roost, family=binomial),
   propwat2000 = glm(camp.binom ~ scale(PropWat2000), data=camp.prev.geo.roost, family=binomial),
@@ -230,8 +222,6 @@ mycop.glms.bin <- list(
   propsav120 = glm(mycop.binom ~ scale(PropSav120), data=mycop.prev.geo.roost, family=binomial),
   propsug120 = glm(mycop.binom ~ scale(PropSug120), data=mycop.prev.geo.roost, family=binomial),
   proprur120 = glm(mycop.binom ~ scale(PropRur120), data=mycop.prev.geo.roost, family=binomial),
-  edge120 = glm(mycop.binom ~ scale(SavEdge120), data=mycop.prev.geo.roost, family=binomial),
-  propsav2000 = glm(mycop.binom ~ scale(PropSav2000), data=mycop.prev.geo.roost, family=binomial),
   propsug2000 = glm(mycop.binom ~ scale(PropSug2000), data=mycop.prev.geo.roost, family=binomial),
   proprur2000 = glm(mycop.binom ~ scale(PropRur2000), data=mycop.prev.geo.roost, family=binomial),
   propwat2000 = glm(mycop.binom ~ scale(PropWat2000), data=mycop.prev.geo.roost, family=binomial),
@@ -248,5 +238,5 @@ mycop.modsel.bin <- model.sel(mycop.glms.bin)
 
 
 ##################################################################################################
-#### --- End of script, proceed to Script 06 --- ####
+#### --- End of script, proceed to Script 09 --- ####
 ##################################################################################################

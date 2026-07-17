@@ -5,7 +5,7 @@
 # prevalence of potential bacterial pathogens but limited responses to land cover            #####
 #                                                                                            #####
 #                                                                                            #####
-# Script 03 : T-tests / ANOVAS, correlations analysis for differences in                      #####
+# Script 03 : T-tests / Kruskal-Wallis, correlations analysis for differences in             #####
 #            ASV species richness based on bat characteristics                               #####
 #            (age, sex, reproductive condition,body condition)                               #####
 #                                                                                            #####
@@ -67,10 +67,10 @@ Age.test <- t.test(asv.richness ~ Age, data = rich.metadat)
 Age.test
 summary(Age.test)
 
-# Reproductive condition (ANOVA (4 groups))
-Repro.anov <- aov(asv.richness ~ ReproStatus, data = rich.metadat)
-Repro.anov
-summary(Repro.anov)
+# Reproductive condition (Kruksal-Wallis (4 groups))
+Repro.kw <- kruskal.test(asv.richness ~ ReproStatus, data = rich.metadat)
+Repro.kw 
+summary(Repro.kw)
 
 
 # Create violin plots for each characteristic (Supplementary Figure 3)

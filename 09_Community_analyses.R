@@ -5,7 +5,7 @@
 # prevalence of potential bacterial pathogens but limited responses to land cover            #####
 #                                                                                            #####
 #                                                                                            #####
-# Script 07 : Bacterial community analysis                                                   #####
+# Script 09 : Bacterial community analysis, based on ASVs                                    #####
 #                                                                                            #####
 #                                                                                            #####
 #                                                                                            #####
@@ -226,5 +226,5 @@ dev.off()
 
 
 ##################################################################################################
-#### --- End of script, all analyses complete ---####
+#### --- End of script, continue to Script 10 ---####
 ##################################################################################################

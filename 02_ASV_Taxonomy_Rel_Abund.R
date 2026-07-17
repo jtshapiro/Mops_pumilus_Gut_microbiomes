@@ -75,10 +75,10 @@ sp.id <- nrow(spe)/nrow(tax.filtered2)*100
 # Relative abundance for Figure 2 (barplot)
 # By Phylum
 # Start with : 
-rel.abund # Created in script 01_DADA2_DataProcessing
+pres.abs.asv.bact # Created in script 01_DADA2_DataProcessing
 
 # Pivot the table
-rel1 <- t(rel.abund) %>%
+rel1 <- t(pres.abs.asv.bact) %>%
   as.data.frame() %>%
   row_to_names(row_number = 1) %>%
   mutate(across(where(is.character), as.numeric))
@@ -115,6 +115,18 @@ bats.per.phyl <- rel3 %>%
 rel4 <- rel3 %>%
   left_join(., bats.per.phyl, by="Phylum") %>%
   dplyr::select(-Phylum, -n.bats) %>%
+  # Mutate data type of name in order to join later with "asv.rich" dataframe
+  mutate(name=as.integer(name)) %>%
+  group_by(name, phyl.graph) %>%
+  summarise(across(everything(), sum), .groups = 'keep') %>%
+  ungroup()%>%
+  left_join(asv.rich, c('name'='sample.id')) %>%
+  # Calculate the relative abundance of each Phylum in terms of proportion of total ASVs
+  mutate(rel.abund=value/asv.richness) %>%
+  select(-starts_with("seq")) %>%
+  filter(rel.abund>0)%>%
+  #For bar graph, bat IDs must be character or else there are gaps between bars
+  mutate(name=as.character(name)) %>%
   rename(Phylum=phyl.graph)
 
 # Set Phyla as factors and order them for the figure legend
@@ -126,7 +138,7 @@ rel4$Phylum<- factor(rel4$Phylum, levels = c("Actinobacteriota","Bacteroidota",
 phyl.bar <- rel4 %>% 
   ggplot(aes(x=name, y=value, fill=Phylum))+
   geom_bar(position="stack", stat="identity") +
-  scale_fill_viridis_d(begin=1, end=0) + 
+  scale_fill_viridis_d(begin=1, end=0, option='turbo') + 
   ylab("Relative abundance") +
   xlab(" ") +
   theme_classic() +
@@ -138,11 +150,11 @@ phyl.bar <- rel4 %>%
         legend.text=element_text(size=14))
 
 
-# Repeat for Family
-rel.abund
+# Repeat for Family, starting with same dataframe:
+pres.abs.asv.bact
 
 # Pivot the table
-rel.f1 <- t(rel.abund) %>%
+rel.f1 <- t(pres.abs.asv.bact) %>%
   as.data.frame() %>%
   row_to_names(row_number = 1) %>%
   mutate(across(where(is.character), as.numeric))
@@ -156,7 +168,7 @@ rel.f2 <- rel.f1 %>%
   dplyr::select(Family, everything()) %>%
   dplyr::select(-asv)
 
-
+# Identify and label the 'Unknown familes"
 rel.f3 <- rel.f2 %>%
   mutate(Family = ifelse(Family=="NA", "Unknown families", Family)) %>%
   mutate(Family=replace_na(Family, "Unknown families")) %>%
@@ -164,6 +176,8 @@ rel.f3 <- rel.f2 %>%
   summarise(across(where(is.numeric), ~ sum(.x))) %>%
   pivot_longer(cols = where(is.numeric))
 
+# Count the number of bats in which each family was identified
+# Label those found in >40 bats as "Minor families"
 bats.per.fam <- rel.f3 %>%
   ungroup() %>%
   filter(value > 0) %>%
@@ -174,9 +188,20 @@ bats.per.fam <- rel.f3 %>%
   mutate(fam.graph = ifelse(n.bats >= 40, Family, "Minor families")) %>%
   mutate(fam.graph = ifelse(Family=="NA", "Unknown family",fam.graph))
 
+# Join with the asv.richness dataframe to calculate relative abundance in terms of proportion of ASVs per bat
 rel.f4 <- rel.f3 %>%
   left_join(., bats.per.fam, by="Family") %>%
   dplyr::select(-Family, -n.bats) %>%
+  mutate(name=as.integer(name)) %>%
+  group_by(name, fam.graph) %>%
+  summarise(across(everything(), sum), .groups = 'keep') %>%
+  ungroup()%>%
+  left_join(asv.rich, c('name'='sample.id')) %>%
+  mutate(rel.abund=value/asv.richness) %>%
+  select(-starts_with("seq")) %>%
+  filter(rel.abund>0)%>%
+  #For bar graph, bat IDs must be character or else there are gaps between bars
+  mutate(name=as.character(name)) %>%
   rename(Family=fam.graph)
 
 rel.f4$Family <- factor(rel.f4$Family, levels = c("Aerococcaceae","Clostridiaceae",
@@ -188,7 +213,7 @@ rel.f4$Family <- factor(rel.f4$Family, levels = c("Aerococcaceae","Clostridiacea
 fam.bar <- rel.f4 %>% 
   ggplot(aes(x=name, y=value, fill=Family))+
   geom_bar(position="stack", stat="identity") +
-  scale_fill_viridis_d(begin=1, end=0) + 
+  scale_fill_viridis_d(begin=1, end=0, option="turbo") + 
   ylab("Relative abundance") +
   xlab("Bat") +
   theme_classic() +
@@ -226,7 +251,7 @@ comm.mat.abund <- tot.reads.samp.bact %>%
   select(-tot.reads)
 
 # Rarefy by individuals (reads per ASV) using abundance matrix above 
-# and plot the curve (Supplementary Figure 2)
+# and plot the curve (Supplementary Figure 1)
 plot(specaccum(comm.mat.abund, method="rarefaction"), ylim=c(0,2500),
      xlab = "Number bats sampled", ylab = "Number ASVs", cex.axis=0.7, cex.lab=0.8)
 
@@ -234,6 +259,27 @@ plot(specaccum(comm.mat.abund, method="rarefaction"), ylim=c(0,2500),
 png(filename="spec.accum.plot.png",width = 12, height=9, units = "cm", res=600)
 plot(specaccum(comm.mat.abund, method="rarefaction"), ylim=c(0,2500),
      xlab = "Number bats sampled", ylab = "Number ASVs", cex.axis=0.7, cex.lab=0.8)
+dev.off()
+
+# Repeat for each individual bat: 
+raremax <- min(rowSums(comm.mat.abund))
+ind.rar.curves <- rarefy(comm.mat.abund, raremax)
+
+# Plot, based on -- https://vegandevs.github.io/vegan/reference/rarefy.html#ref-examples
+rarecurve(comm.mat.abund, step = 20, sample = raremax, col = "blue", cex = 0.3)
+
+# Save figure (Supplementary Figure S2)
+png(filename="ind.rare.curve.png",width = 25, height=18, units = "cm", res=600)
+rarecurve(comm.mat.abund, step = 20, col = "blue", 
+          cex = 0.8, xlab = "Number reads", ylab = "Number ASVs", cex.axis=1, cex.lab=1.3)
+dev.off()
+
+#Zoom in for low ASV count samples: 610, 635, 689 (Inset plot for Supplementary Figure S2)
+zoom.df <- comm.mat.abund %>%
+  filter(row.names(.) %in% c('610','635','689'))
+png(filename="ind.rare.curve.zoom.png",width = 10, height=6, units = "cm", res=600)
+rarecurve(zoom.df, step = 20, col = "blue", 
+          cex = 0.6, xlab = "Number reads", ylab = "Number ASVs", cex.axis=0.7, cex.lab=0.8)
 dev.off()
 ##################################################################################################
 
